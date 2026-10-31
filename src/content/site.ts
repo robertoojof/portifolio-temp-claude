@@ -32,10 +32,18 @@ export type Project = {
   placeholder?: boolean;
 };
 
+export type PostBlock =
+  | { type: "p"; text: Localized }
+  | { type: "h2"; text: Localized }
+  | { type: "list"; items: Localized[] }
+  | { type: "code"; code: string };
+
 export type Post = {
   slug: string;
   title: Localized;
   date: string; // ISO yyyy-mm-dd
+  summary: Localized;
+  body: PostBlock[];
   placeholder?: boolean;
 };
 
@@ -126,7 +134,187 @@ export const projects: Project[] = [
   },
 ];
 
-export const posts: Post[] = [];
+export const posts: Post[] = [
+  {
+    slug: "mock-post-three",
+    title: {
+      en: "What I learned shipping my first full-stack app",
+      pt: "O que aprendi publicando minha primeira aplicação full-stack",
+    },
+    date: "2026-10-20",
+    summary: {
+      en: "Putting an app online taught me more than building it did.",
+      pt: "Colocar uma aplicação no ar me ensinou mais do que construí-la.",
+    },
+    body: [
+      {
+        type: "p",
+        text: {
+          en: "For weeks the app only lived on localhost. It worked, the tests passed, and I felt done. Then I tried to deploy it, and a whole new list of problems showed up.",
+          pt: "Por semanas a aplicação só existiu no localhost. Funcionava, os testes passavam e eu me sentia pronto. Aí tentei publicar, e apareceu uma lista nova de problemas.",
+        },
+      },
+      {
+        type: "h2",
+        text: {
+          en: "Environment variables are part of the app",
+          pt: "Variáveis de ambiente fazem parte da aplicação",
+        },
+      },
+      {
+        type: "p",
+        text: {
+          en: "The first build failed because a key existed only in my local .env file. Now every project starts with a .env.example that lists everything the app needs to run.",
+          pt: "O primeiro build falhou porque uma chave só existia no meu .env local. Hoje todo projeto começa com um .env.example que lista tudo o que a aplicação precisa para rodar.",
+        },
+      },
+      {
+        type: "code",
+        code: "DATABASE_URL=\nRESEND_API_KEY=\nCONTACT_TO_EMAIL=",
+      },
+      {
+        type: "h2",
+        text: { en: "What I would do again", pt: "O que eu faria de novo" },
+      },
+      {
+        type: "list",
+        items: [
+          {
+            en: "Deploy on day one, even when there is almost nothing to show.",
+            pt: "Publicar no primeiro dia, mesmo com quase nada para mostrar.",
+          },
+          {
+            en: "Keep the database schema in migrations, never edited by hand.",
+            pt: "Manter o schema do banco em migrations, nunca editado à mão.",
+          },
+          {
+            en: "Write down every error and how I fixed it.",
+            pt: "Anotar cada erro e como resolvi.",
+          },
+        ],
+      },
+      {
+        type: "p",
+        text: {
+          en: "The app is small, but shipping it changed how I start every project after it.",
+          pt: "A aplicação é pequena, mas publicá-la mudou o jeito como começo todo projeto depois dela.",
+        },
+      },
+    ],
+    placeholder: true,
+  },
+  {
+    slug: "mock-post-two",
+    title: {
+      en: "Server actions vs. API routes in Next.js",
+      pt: "Server actions vs. rotas de API no Next.js",
+    },
+    date: "2026-09-08",
+    summary: {
+      en: "When I reach for each one, using this site's contact form as the example.",
+      pt: "Quando uso cada um, com o formulário de contato deste site como exemplo.",
+    },
+    body: [
+      {
+        type: "p",
+        text: {
+          en: "When I built the contact form on this site, I had to choose: a server action or an API route. Both run on the server, but they solve different problems.",
+          pt: "Quando fiz o formulário de contato deste site, precisei escolher: server action ou rota de API. Os dois rodam no servidor, mas resolvem problemas diferentes.",
+        },
+      },
+      {
+        type: "h2",
+        text: { en: "Server actions", pt: "Server actions" },
+      },
+      {
+        type: "p",
+        text: {
+          en: "A server action is a function the form calls directly. There is no fetch and no URL to manage, and the form still works before JavaScript loads.",
+          pt: "Uma server action é uma função que o formulário chama direto. Não tem fetch nem URL para gerenciar, e o formulário funciona mesmo antes do JavaScript carregar.",
+        },
+      },
+      {
+        type: "code",
+        code: '"use server";\n\nexport async function sendMessage(state: State, data: FormData) {\n  const email = data.get("email");\n  // validate, then send\n}',
+      },
+      {
+        type: "h2",
+        text: { en: "API routes", pt: "Rotas de API" },
+      },
+      {
+        type: "p",
+        text: {
+          en: "An API route is a public endpoint. I use one when something outside the app needs to call it: a webhook, a mobile app, or another service.",
+          pt: "Uma rota de API é um endpoint público. Uso quando algo de fora da aplicação precisa chamar: um webhook, um app mobile ou outro serviço.",
+        },
+      },
+      {
+        type: "list",
+        items: [
+          {
+            en: "A form inside the app: server action.",
+            pt: "Formulário dentro da aplicação: server action.",
+          },
+          {
+            en: "Something external calls it: API route.",
+            pt: "Algo externo chama: rota de API.",
+          },
+        ],
+      },
+    ],
+    placeholder: true,
+  },
+  {
+    slug: "mock-post-one",
+    title: {
+      en: "Why I started this blog",
+      pt: "Por que comecei este blog",
+    },
+    date: "2026-07-15",
+    summary: {
+      en: "Writing down what I learn, so I learn it twice.",
+      pt: "Escrever o que aprendo, para aprender duas vezes.",
+    },
+    body: [
+      {
+        type: "p",
+        text: {
+          en: "I learn the most when I build things, but I forget a lot of it. A bug I spent an afternoon on comes back three months later, and I have to solve it again from scratch.",
+          pt: "Aprendo mais quando construo coisas, mas esqueço muito. Um bug que me custou uma tarde volta três meses depois, e preciso resolver tudo de novo.",
+        },
+      },
+      {
+        type: "p",
+        text: {
+          en: "This blog is where I write those things down. Short posts about what I built, what broke, and what I understood along the way.",
+          pt: "Este blog é onde anoto essas coisas. Posts curtos sobre o que construí, o que quebrou e o que entendi no caminho.",
+        },
+      },
+      {
+        type: "h2",
+        text: { en: "What to expect", pt: "O que esperar" },
+      },
+      {
+        type: "list",
+        items: [
+          {
+            en: "Notes from the projects on this site.",
+            pt: "Notas dos projetos deste site.",
+          },
+          {
+            en: "Comparisons between tools I have tried.",
+            pt: "Comparações entre ferramentas que testei.",
+          },
+          {
+            en: "Mistakes, and what they taught me.",
+            pt: "Erros, e o que eles me ensinaram.",
+          },
+        ],
+      },
+    ],
+    placeholder: true,
+  },
+];
 
 export const pick = (value: Localized, locale: keyof Localized) =>
   value[locale];

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { type Post, type Project, pick } from "@/content/site";
 import type { Dictionary } from "@/i18n/dictionaries";
 import type { Locale } from "@/i18n/locales";
@@ -132,27 +133,42 @@ export function PostList({
       </div>
     );
   }
-  const format = new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : "en-US", {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-    timeZone: "UTC",
-  });
+  const format = postDateFormat(lang);
   return (
     <ul className="grid gap-3">
       {items.map((post) => (
-        <li
-          key={post.slug}
-          className="sr-row flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 rounded-xl border border-line bg-surface px-6 py-5"
-        >
-          <span className="text-lg font-semibold text-balance">
-            {pick(post.title, lang)}
-          </span>
-          <time dateTime={post.date} className="tabular text-sm text-muted">
-            {format.format(new Date(post.date))}
-          </time>
+        <li key={post.slug} className="sr-row">
+          <Link
+            href={`/${lang}/blog/${post.slug}`}
+            className="group grid gap-2 rounded-xl border border-line bg-surface px-6 py-5 transition-colors duration-300 ease-out hover:border-line-strong"
+          >
+            <span className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+              <span className="text-lg font-semibold text-balance group-hover:text-signal">
+                <span className={post.placeholder ? "is-placeholder" : ""}>
+                  {pick(post.title, lang)}
+                </span>
+                {post.placeholder ? (
+                  <PlaceholderMark label={dict.placeholder} />
+                ) : null}
+              </span>
+              <time dateTime={post.date} className="tabular text-sm text-muted">
+                {format.format(new Date(post.date))}
+              </time>
+            </span>
+            <span className="max-w-[60ch] leading-relaxed text-muted">
+              {pick(post.summary, lang)}
+            </span>
+          </Link>
         </li>
       ))}
     </ul>
   );
 }
+
+export const postDateFormat = (lang: Locale) =>
+  new Intl.DateTimeFormat(lang === "pt" ? "pt-BR" : "en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
