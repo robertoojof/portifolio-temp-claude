@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Portfólio — Roberto
 
-## Getting Started
+Portfólio pessoal de um desenvolvedor full-stack júnior. Reúne a trajetória pessoal, os projetos (com links para o GitHub) e um blog, apresentados como uma história só, focada na evolução ao longo do tempo.
 
-First, run the development server:
+O site é bilíngue (inglês e português) e tem tema claro e escuro.
+
+## Stack
+
+- [Next.js 16](https://nextjs.org) (App Router, Cache Components, React Compiler)
+- React 19
+- Tailwind CSS 4
+- TypeScript
+- [Biome](https://biomejs.dev) para lint e formatação
+- Yarn 4
+
+## Como rodar
 
 ```bash
-npm run dev
-# or
+yarn install
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000). O visitante é redirecionado para `/en` ou `/pt` de acordo com o idioma do navegador (o padrão é inglês).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Comando       | O que faz                          |
+| ------------- | ---------------------------------- |
+| `yarn dev`    | Servidor de desenvolvimento        |
+| `yarn build`  | Build de produção                  |
+| `yarn start`  | Sobe o build de produção           |
+| `yarn lint`   | Verifica o código com o Biome      |
+| `yarn format` | Formata o código com o Biome       |
 
-## Learn More
+## Variáveis de ambiente
 
-To learn more about Next.js, take a look at the following resources:
+O formulário de contato envia mensagens pelo [Resend](https://resend.com). Copie `.env.example` para `.env.local` e preencha:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Variável             | Descrição                                                                 |
+| -------------------- | ------------------------------------------------------------------------- |
+| `RESEND_API_KEY`     | Chave da API do Resend                                                    |
+| `CONTACT_TO_EMAIL`   | E-mail que recebe as mensagens                                            |
+| `CONTACT_FROM_EMAIL` | Opcional. Remetente em um domínio verificado no Resend (padrão: remetente de teste do Resend) |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Sem `RESEND_API_KEY` e `CONTACT_TO_EMAIL`, o formulário aparece desabilitado.
 
-## Deploy on Vercel
+## Estrutura
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+src/
+├── app/
+│   ├── [lang]/          # Rotas por idioma: início, projetos, blog
+│   └── actions/         # Server actions (formulário de contato)
+├── components/          # Componentes da interface
+├── content/site.ts      # Conteúdo do site (sobre, projetos, links)
+├── i18n/                # Idiomas e dicionários de textos
+└── proxy.ts             # Redireciona para o idioma do visitante
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+O conteúdo fica em `src/content/site.ts`, com cada texto escrito nos dois idiomas. Itens marcados com `placeholder: true` aparecem com uma marcação visível até serem trocados pelo conteúdo real.
+
+Decisões de produto e de design estão em [`PRODUCT.md`](PRODUCT.md) e [`DESIGN.md`](DESIGN.md).
