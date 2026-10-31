@@ -1,0 +1,349 @@
+@import "tailwindcss";
+
+/*
+ * Day & Night, neon edition.
+ * Night: near-black ground, hairline cards, one electric-cyan signal.
+ * Day: cool paper ground, white cards, one cobalt signal.
+ * The signal carries the name's second line, primary actions, and live states;
+ * placeholders never wear it.
+ */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+  --ground: #f4f6f9;
+  --surface: #ffffff;
+  --line: #0e17261a;
+  --line-strong: #0e172633;
+  --ink: #0e1726;
+  --muted: #586374;
+  --signal: #0047ff;
+  --on-signal: #ffffff;
+  --on-ink: #f4f6f9;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #08090b;
+  --surface: #111316;
+  --line: #ffffff14;
+  --line-strong: #ffffff26;
+  --ink: #e9ebee;
+  --muted: #8d939c;
+  --signal: #3ddcff;
+  --on-signal: #03141a;
+  --on-ink: #08090b;
+}
+
+@theme inline {
+  --color-ground: var(--ground);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-signal: var(--signal);
+  --color-on-signal: var(--on-signal);
+  --color-line-strong: var(--line-strong);
+  --color-on-ink: var(--on-ink);
+  --font-sans: var(--font-mplus);
+  --font-display: var(--font-unbounded);
+}
+
+html {
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--font-mplus), system-ui, sans-serif;
+  font-feature-settings: "palt" 0;
+  scrollbar-color: var(--line-strong) var(--ground);
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  overflow-x: clip;
+  background: var(--ground);
+  caret-color: var(--signal);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--signal);
+  color: var(--on-signal);
+}
+
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+a {
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1px;
+}
+
+a[aria-disabled="true"] {
+  cursor: default;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Placeholder content stays visibly a placeholder until real copy lands. */
+.is-placeholder {
+  text-decoration: underline dashed var(--muted);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.3em;
+}
+
+/* Project preview slot: a quiet measured grid until a real screenshot exists. */
+.preview {
+  background-color: var(--ground);
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 2rem 2rem;
+  background-position: center;
+}
+
+/* ---------- Arrival: the hero lands with a spring ----------
+ * A spring curve (overshoot, settle) written as linear() stops.
+ * Transform only, so nothing reflows; text is legible from the first frame.
+ */
+
+:root {
+  --spring: linear(
+    0,
+    0.009,
+    0.035 2.1%,
+    0.141 4.4%,
+    0.723 12.9%,
+    0.938 16.7%,
+    1.017 19.4%,
+    1.077 22.4%,
+    1.109 25.6%,
+    1.114 28.7%,
+    1.088 33.6%,
+    1.033 40%,
+    0.992 47.3%,
+    0.982 52.7%,
+    0.987 62.4%,
+    1.001 75%,
+    1
+  );
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .spring-in {
+    animation: spring-in 1100ms var(--spring) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+
+  .spring-pop {
+    animation: spring-pop 1000ms var(--spring) both;
+    animation-delay: calc(var(--i, 0) * 90ms);
+  }
+}
+
+@keyframes spring-in {
+  from {
+    opacity: 0.2;
+    transform: translateY(0.45em) scaleY(0.9);
+    transform-origin: 0 100%;
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes spring-pop {
+  from {
+    opacity: 0.2;
+    transform: scale(0.88);
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+/* ---------- Scroll choreography ----------
+ * Every effect is scroll-linked (it moves with the reader, never on a timer)
+ * and only runs where scroll timelines exist and motion is welcome.
+ * Without support, or with reduced motion, everything sits at rest, visible.
+ */
+
+.sr-progress {
+  display: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: scroll()) {
+    /* Reading progress: a signal hairline under the header. */
+    .sr-progress {
+      display: block;
+      position: absolute;
+      inset: auto 0 -1px 0;
+      height: 2px;
+      background: var(--signal);
+      transform-origin: 0 50%;
+      animation: sr-grow-x linear both;
+      animation-timeline: scroll(root);
+    }
+
+    /* Header settles onto a hairline once the page moves. */
+    .sr-header {
+      animation: sr-header linear both;
+      animation-timeline: scroll(root);
+      animation-range: 0 8rem;
+    }
+
+    /* Section titles rise into place, always whole. */
+    .sr-title {
+      animation: sr-title linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+
+    /* Journey rail draws itself down as the entries arrive. */
+    .sr-rail {
+      transform-origin: 50% 0;
+      animation: sr-grow-y linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 100%;
+    }
+
+    /* Journey entries arrive one by one as the reader reaches them. */
+    .sr-step {
+      animation: sr-step linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 100%;
+    }
+
+    .sr-dot {
+      animation: sr-dot linear both;
+      animation-timeline: view();
+      animation-range: entry 10% entry 100%;
+    }
+
+    /* Project cards slide in from alternating sides. */
+    .sr-from-left,
+    .sr-from-right {
+      animation: sr-from-left linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 100%;
+    }
+
+    .sr-from-right {
+      animation-name: sr-from-right;
+    }
+
+    /* Preview grids travel slower than the page. */
+    .sr-parallax {
+      animation: sr-parallax linear both;
+      animation-timeline: view();
+      animation-range: cover 0% cover 100%;
+    }
+
+    /* Rows (contacts, posts) rise one by one as each enters. */
+    .sr-row {
+      animation: sr-row linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+  }
+}
+
+@keyframes sr-grow-x {
+  from {
+    transform: scaleX(0);
+  }
+}
+
+@keyframes sr-grow-y {
+  from {
+    transform: scaleY(0);
+  }
+}
+
+@keyframes sr-header {
+  to {
+    border-bottom-color: var(--line);
+  }
+}
+
+@keyframes sr-title {
+  from {
+    opacity: 0;
+    transform: translateY(0.6em);
+  }
+}
+
+@keyframes sr-step {
+  from {
+    opacity: 0;
+    transform: translateX(-1.75rem);
+  }
+}
+
+@keyframes sr-dot {
+  from {
+    transform: scale(0.2);
+    opacity: 0.2;
+  }
+}
+
+@keyframes sr-from-left {
+  from {
+    opacity: 0.15;
+    transform: translateX(-1.5rem);
+  }
+}
+
+@keyframes sr-from-right {
+  from {
+    opacity: 0.15;
+    transform: translateX(1.5rem);
+  }
+}
+
+@keyframes sr-parallax {
+  from {
+    background-position: center -3rem;
+  }
+  to {
+    background-position: center 3rem;
+  }
+}
+
+@keyframes sr-row {
+  from {
+    opacity: 0.15;
+    transform: translateY(1.25rem);
+  }
+}
+
+/* ---------- Theme change: the horizon wipe ---------- */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: horizon-wipe 620ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes horizon-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}
