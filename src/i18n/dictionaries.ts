@@ -54,6 +54,9 @@ const en = {
     viewAll: "All posts",
     empty: "No posts yet.",
     firstPost: "Title of the first post",
+    back: "All posts",
+    sample:
+      "Sample post. This text is a placeholder until a real post replaces it.",
   },
   contact: {
     title: "Let's talk",
@@ -159,6 +162,9 @@ const pt: Dictionary = {
     viewAll: "Todos os posts",
     empty: "Nenhum post ainda.",
     firstPost: "Título do primeiro post",
+    back: "Todos os posts",
+    sample:
+      "Post de exemplo. Este texto é provisório até um post real substituí-lo.",
   },
   contact: {
     title: "Vamos conversar",
